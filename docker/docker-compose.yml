@@ -1,16 +1,6 @@
-version: "2"
+version: "2.2"
 services:
   
-  portainer:
-    container_name: portainer
-    image: portainer/portainer
-    restart: always
-    command: --no-analytics 
-    ports:
-      - 8000:8000
-      - 9000:9000
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock  
   watchtower:
     container_name: watchtower
     restart: always
@@ -18,6 +8,8 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     command: --schedule "0 0 4 * * SUN" --cleanup 
+    cpus: '0.5'
+    mem_limit: '500M'
   plex:
     image: linuxserver/plex:latest
     container_name: plex
@@ -32,6 +24,8 @@ services:
     ports:
       - 32400:32400
     restart: unless-stopped
+    cpus: '1'
+    mem_limit: '2G'
   sabnzbd: 
     image: linuxserver/sabnzbd
     container_name: sabnzbd 
@@ -46,6 +40,8 @@ services:
     ports:
       - 8080:8080
     restart: unless-stopped
+    cpus: '0.50'
+    mem_limit: '400M'
   hydra2:
     image: linuxserver/hydra2
     container_name: hydra2
@@ -59,6 +55,8 @@ services:
     ports:
       - 5076:5076
     restart: unless-stopped
+    cpus: '0.50'
+    mem_limit: '500M'
   sonarr:
     image: linuxserver/sonarr
     container_name: sonarr
@@ -73,6 +71,8 @@ services:
     ports:
       - 8989:8989 
     restart: unless-stopped
+    cpus: '0.50'
+    mem_limit: '500M'
   radarr:
     image: linuxserver/radarr
     container_name: radarr
@@ -86,7 +86,9 @@ services:
       - ~/storage/nas2/media/movies:/movies
     ports:
       - 7878:7878
-    restart: unless-stopped 
+    restart: unless-stopped
+    cpus: '0.50'
+    mem_limit: '500M' 
   ombi:
     image: linuxserver/ombi
     container_name: ombi
@@ -99,3 +101,23 @@ services:
     ports:
       - 3579:3579
     restart: unless-stopped
+    cpus: '0.50'
+    mem_limit: '500M'
+  homebridge:
+    image: oznu/homebridge:latest
+    container_name: homebridge
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=EST
+      - HOMEBRIDGE_CONFIG_UI=1
+      - HOMEBRIDGE_CONFIG_UI_PORT=8000
+    volumes:
+      - ~/docker-configs/homebridge/config:/config
+    restart: unless-stopped
+    network_mode: host
+    ports:
+      - 8000:8000
+      - 53838:53838
+    cpus: '0.7'
+    mem_limit: '700M'
